@@ -238,6 +238,7 @@ class GCN(torch.nn.Module):
                   f' {acc*100:>6.2f}% | Val Loss: {val_loss:.2f} | '
                   f'Val Acc: {val_acc*100:.2f}%')
 
+
 #Calculamos la precisión
 def accuracy(pred_y, y):
     return ((pred_y == y).sum() / len(y)).item()
@@ -259,3 +260,15 @@ graphsage.fit(data, 200)
 
 #Evaluación
 print(f'Precisión de GraphSAGE: {test(graphsage, data)*100:.2f}%')
+
+#Lo mismo pero con GCN
+gcn = GCN(dataset.num_features, 64, dataset.num_classes)
+print(gcn)
+gcn.fit(data, 200)
+print(f'Precisión de GCN: {test(gcn, data)*100:.2f}%')
+
+#lo mismo pero con GAT
+gat = GAT(dataset.num_features, 64, dataset.num_classes)
+print(gat)
+gat.fit(data, 200)
+print(f'Precisión de GAT: {test(gat, data)*100:.2f}%')
