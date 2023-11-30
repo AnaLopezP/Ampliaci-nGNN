@@ -98,8 +98,9 @@ plot_degree(data)
 # mostramos los grados de los nodos de los subgrafos
 plot_degree(subdata)
 
+
+#Implementación de la arquitectura GraphSAGE
 class GraphSAGE(torch.nn.Module):
-  """GraphSAGE"""
   def __init__(self, dim_in, dim_h, dim_out):
     super().__init__()
     self.sage1 = SAGEConv(dim_in, dim_h)
@@ -125,7 +126,7 @@ class GraphSAGE(torch.nn.Module):
       val_loss = 0
       val_acc = 0
 
-      # Train on batches
+      # Entrenamiento de los lotes
       for batch in train_loader:
         optimizer.zero_grad()
         out = self(batch.x, batch.edge_index)
@@ -136,18 +137,20 @@ class GraphSAGE(torch.nn.Module):
         loss.backward()
         optimizer.step()
 
-        # Validation
+        # Validación
         val_loss += criterion(out[batch.val_mask], batch.y[batch.val_mask])
         val_acc += accuracy(out[batch.val_mask].argmax(dim=1),
                              batch.y[batch.val_mask])
 
-      # Print metrics every 10 epochs 
+      # Imprimimos las métricas cada 10 épocas
       if(epoch % 10 == 0):
           print(f'Epoch {epoch:>3} | Train Loss: {total_loss/len(train_loader):.3f} '
                 f'| Train Acc: {acc/len(train_loader)*100:>6.2f}% | Val Loss: '
                 f'{val_loss/len(train_loader):.2f} | Val Acc: '
                 f'{val_acc/len(train_loader)*100:.2f}%')
 
+
+#Lo mismo pero con GAT para comparar
 class GAT(torch.nn.Module):
   """Graph Attention Network"""
   def __init__(self, dim_in, dim_h, dim_out, heads=8):
@@ -171,7 +174,7 @@ class GAT(torch.nn.Module):
     optimizer = self.optimizer
     self.train()
     for epoch in range(epochs+1):
-        # Training
+        # Entrenamiento
         optimizer.zero_grad()
         out = self(data.x, data.edge_index)
         loss = criterion(out[data.train_mask], data.y[data.train_mask])
@@ -180,17 +183,18 @@ class GAT(torch.nn.Module):
         loss.backward()
         optimizer.step()
 
-        # Validation
+        # Validación
         val_loss = criterion(out[data.val_mask], data.y[data.val_mask])
         val_acc = accuracy(out[data.val_mask].argmax(dim=1),
                            data.y[data.val_mask])
 
-        # Print metrics every 10 epochs
+        # Imprimimos las métricas cada 10 épocas
         if(epoch % 10 == 0):
             print(f'Epoch {epoch:>3} | Train Loss: {loss:.3f} | Train Acc:'
                   f' {acc*100:>6.2f}% | Val Loss: {val_loss:.2f} | '
                   f'Val Acc: {val_acc*100:.2f}%')
 
+#Lo mismo pero con GCN para comparar
 class GCN(torch.nn.Module):
   """Graph Convolutional Network"""
   def __init__(self, dim_in, dim_h, dim_out):
@@ -214,7 +218,7 @@ class GCN(torch.nn.Module):
     self.train()
 
     for epoch in range(epochs+1):
-        # Training
+        # Entrenamiento
         optimizer.zero_grad()
         out = self(data.x, data.edge_index)
         loss = criterion(out[data.train_mask], data.y[data.train_mask])
@@ -223,24 +227,24 @@ class GCN(torch.nn.Module):
         loss.backward()
         optimizer.step()
 
-        # Validation
+        # Validación
         val_loss = criterion(out[data.val_mask], data.y[data.val_mask])
         val_acc = accuracy(out[data.val_mask].argmax(dim=1),
                            data.y[data.val_mask])
 
-        # Print metrics every 10 epochs
+        # Imprimimos las métricas cada 10 épocas
         if(epoch % 10 == 0):
             print(f'Epoch {epoch:>3} | Train Loss: {loss:.3f} | Train Acc:'
                   f' {acc*100:>6.2f}% | Val Loss: {val_loss:.2f} | '
                   f'Val Acc: {val_acc*100:.2f}%')
 
+#Calculamos la precisión
 def accuracy(pred_y, y):
-    """Calculate accuracy."""
     return ((pred_y == y).sum() / len(y)).item()
 
+#Evaluamos los modelos y imprimimos su precisión
 @torch.no_grad()
 def test(model, data):
-    """Evaluate the model on test set and print the accuracy score."""
     model.eval()
     out = model(data.x, data.edge_index)
     acc = accuracy(out.argmax(dim=1)[data.test_mask], data.y[data.test_mask])
