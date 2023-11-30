@@ -8,6 +8,10 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.utils import to_networkx
 
+#Para las gráficas de los grados de nodos
+from torch_geometric.utils import degree
+from collections import Counter
+
 plt.rcParams['figure.dpi'] = 300
 plt.rcParams.update({'font.size': 12})
 
@@ -66,3 +70,24 @@ for idx, (subdata, pos) in enumerate(zip(train_loader, [221, 222, 233, 224])):
         )
 
 plt.show()
+
+def plot_degree(data):
+    # Get list of degrees for each node
+    degrees = degree(data.edge_index[0]).numpy()
+
+    # Count the number of nodes for each degree
+    numbers = Counter(degrees)
+
+    # Bar plot
+    fig, ax = plt.subplots(figsize=(14, 6))
+    ax.set_xlabel('Node degree')
+    ax.set_ylabel('Number of nodes')
+    plt.bar(numbers.keys(),
+            numbers.values(),
+            color='#0A047A')
+
+# Plot node degrees from the original graph
+plot_degree(data)
+
+# Plot node degrees from the last subgraph
+plot_degree(subdata)
