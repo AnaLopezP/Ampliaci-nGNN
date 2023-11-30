@@ -249,3 +249,13 @@ def test(model, data):
     out = model(data.x, data.edge_index)
     acc = accuracy(out.argmax(dim=1)[data.test_mask], data.y[data.test_mask])
     return acc
+
+#Creamos GraphSAGE
+graphsage = GraphSAGE(dataset.num_features, 64, dataset.num_classes)
+print(graphsage)
+
+#Entrenamiento
+graphsage.fit(data, 200)
+
+#Evaluación
+print(f'Precisión de GraphSAGE: {test(graphsage, data)*100:.2f}%')
