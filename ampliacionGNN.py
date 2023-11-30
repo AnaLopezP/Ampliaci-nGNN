@@ -72,13 +72,13 @@ for idx, (subdata, pos) in enumerate(zip(train_loader, [221, 222, 233, 224])):
 plt.show()
 
 def plot_degree(data):
-    # Get list of degrees for each node
+    # cojemos la lista de grados por cada nodo
     degrees = degree(data.edge_index[0]).numpy()
 
-    # Count the number of nodes for each degree
+    # contamos el numero de nodos por grado
     numbers = Counter(degrees)
 
-    # Bar plot
+    # mostramos la figura
     fig, ax = plt.subplots(figsize=(14, 6))
     ax.set_xlabel('Node degree')
     ax.set_ylabel('Number of nodes')
@@ -86,8 +86,8 @@ def plot_degree(data):
             numbers.values(),
             color='#0A047A')
 
-# Plot node degrees from the original graph
+# mostramos los grados de los nodos del grafo completo
 plot_degree(data)
 
-# Plot node degrees from the last subgraph
+# mostramos los grados de los nodos de los subgrafos
 plot_degree(subdata)
